@@ -13,14 +13,14 @@
  * @licence MIT License
  */
 
-( function ( $ ) ***REMOVED***
+( function ( $ ) {
 	'use strict';
 
-	var MessageParserEmitter = function () ***REMOVED***
+	var MessageParserEmitter = function () {
 		this.language = $.i18n.languages[ String.locale ] || $.i18n.languages[ 'default' ];
 	};
 
-	MessageParserEmitter.prototype = ***REMOVED***
+	MessageParserEmitter.prototype = {
 		constructor: MessageParserEmitter,
 
 		/**
@@ -28,31 +28,31 @@
 		 * sure it's not overwritten by any magic.) Walk entire node structure,
 		 * applying replacements and template functions when appropriate
 		 *
-		 * @param ***REMOVED***Mixed} node abstract syntax tree (top node or subnode)
-		 * @param ***REMOVED***Array} replacements for $1, $2, ... $n
-		 * @return ***REMOVED***Mixed} single-string node or array of nodes suitable for
+		 * @param {Mixed} node abstract syntax tree (top node or subnode)
+		 * @param {Array} replacements for $1, $2, ... $n
+		 * @return {Mixed} single-string node or array of nodes suitable for
 		 *  jQuery appending.
 		 */
-		emit: function ( node, replacements ) ***REMOVED***
+		emit: function ( node, replacements ) {
 			var ret, subnodes, operation,
 				messageParserEmitter = this;
 
-			switch ( typeof node ) ***REMOVED***
+			switch ( typeof node ) {
 				case 'string':
 				case 'number':
 					ret = node;
 					break;
 				case 'object':
 				// node is an array of nodes
-					subnodes = $.map( node.slice( 1 ), function ( n ) ***REMOVED***
+					subnodes = $.map( node.slice( 1 ), function ( n ) {
 						return messageParserEmitter.emit( n, replacements );
 					} );
 
 					operation = node[ 0 ].toLowerCase();
 
-					if ( typeof messageParserEmitter[ operation ] === 'function' ) ***REMOVED***
+					if ( typeof messageParserEmitter[ operation ] === 'function' ) {
 						ret = messageParserEmitter[ operation ]( subnodes, replacements );
-					} else ***REMOVED***
+					} else {
 						throw new Error( 'unknown operation "' + operation + '"' );
 					}
 
@@ -79,13 +79,13 @@
 		 * jQuery with synthetic span However, unwrap any other synthetic spans
 		 * in our children and pass them upwards
 		 *
-		 * @param ***REMOVED***Array} nodes Mixed, some single nodes, some arrays of nodes.
-		 * @return ***REMOVED***string}
+		 * @param {Array} nodes Mixed, some single nodes, some arrays of nodes.
+		 * @return {string}
 		 */
-		concat: function ( nodes ) ***REMOVED***
+		concat: function ( nodes ) {
 			var result = '';
 
-			$.each( nodes, function ( i, node ) ***REMOVED***
+			$.each( nodes, function ( i, node ) {
 				// strings, integers, anything else
 				result += node;
 			} );
@@ -101,17 +101,17 @@
 		 * parameter 98 -> not found -> return "$99" ) TODO throw error if
 		 * nodes.length > 1 ?
 		 *
-		 * @param ***REMOVED***Array} nodes One element, integer, n >= 0
-		 * @param ***REMOVED***Array} replacements for $1, $2, ... $n
-		 * @return ***REMOVED***string} replacement
+		 * @param {Array} nodes One element, integer, n >= 0
+		 * @param {Array} replacements for $1, $2, ... $n
+		 * @return {string} replacement
 		 */
-		replace: function ( nodes, replacements ) ***REMOVED***
+		replace: function ( nodes, replacements ) {
 			var index = parseInt( nodes[ 0 ], 10 );
 
-			if ( index < replacements.length ) ***REMOVED***
+			if ( index < replacements.length ) {
 				// replacement is not a string, don't touch!
 				return replacements[ index ];
-			} else ***REMOVED***
+			} else {
 				// index not found, fallback to displaying variable
 				return '$' + ( index + 1 );
 			}
@@ -123,11 +123,11 @@
 		 * number). So convert it back with the current language's
 		 * convertNumber.
 		 *
-		 * @param ***REMOVED***Array} nodes List [ ***REMOVED***String|Number}, ***REMOVED***String}, ***REMOVED***String} ... ]
-		 * @return ***REMOVED***string} selected pluralized form according to current
+		 * @param {Array} nodes List [ {String|Number}, {String}, {String} ... ]
+		 * @return {string} selected pluralized form according to current
 		 *  language.
 		 */
-		plural: function ( nodes ) ***REMOVED***
+		plural: function ( nodes ) {
 			var count = parseFloat( this.language.convertNumber( nodes[ 0 ], 10 ) ),
 				forms = nodes.slice( 1 );
 
@@ -136,12 +136,12 @@
 
 		/**
 		 * Transform parsed structure into gender Usage
-		 * ***REMOVED******REMOVED***gender:gender|masculine|feminine|neutral}}.
+		 * {{gender:gender|masculine|feminine|neutral}}.
 		 *
-		 * @param ***REMOVED***Array} nodes List [ ***REMOVED***String}, ***REMOVED***String}, ***REMOVED***String} , ***REMOVED***String} ]
-		 * @return ***REMOVED***string} selected gender form according to current language
+		 * @param {Array} nodes List [ {String}, {String}, {String} , {String} ]
+		 * @return {string} selected gender form according to current language
 		 */
-		gender: function ( nodes ) ***REMOVED***
+		gender: function ( nodes ) {
 			var gender = nodes[ 0 ],
 				forms = nodes.slice( 1 );
 
@@ -150,13 +150,13 @@
 
 		/**
 		 * Transform parsed structure into grammar conversion. Invoked by
-		 * putting ***REMOVED******REMOVED***grammar:form|word}} in a message
+		 * putting {{grammar:form|word}} in a message
 		 *
-		 * @param ***REMOVED***Array} nodes List [***REMOVED***Grammar case eg: genitive}, ***REMOVED***String word}]
-		 * @return ***REMOVED***string} selected grammatical form according to current
+		 * @param {Array} nodes List [{Grammar case eg: genitive}, {String word}]
+		 * @return {string} selected grammatical form according to current
 		 *  language.
 		 */
-		grammar: function ( nodes ) ***REMOVED***
+		grammar: function ( nodes ) {
 			var form = nodes[ 0 ],
 				word = nodes[ 1 ];
 

@@ -11,11 +11,11 @@
  * @licence GNU General Public Licence 2.0 or later
  * @licence MIT License
  */
-( function ( $ ) ***REMOVED***
+( function ( $ ) {
 	'use strict';
 
-	$.i18n = $.i18n || ***REMOVED***};
-	$.extend( $.i18n.fallbacks, ***REMOVED***
+	$.i18n = $.i18n || {};
+	$.extend( $.i18n.fallbacks, {
 		ab: [ 'ru' ],
 		ace: [ 'id' ],
 		aln: [ 'sq' ],

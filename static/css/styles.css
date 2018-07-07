@@ -1,17 +1,17 @@
-#container-cam ***REMOVED***
+#container-cam {
   margin: 0px auto;
   width: 500px;
   height: 375px;
   border: 10px #333 solid;
 }
 
-#videoElement ***REMOVED***
+#videoElement {
   width: 500px;
   height: 375px;
   background-color: #666;
 }
 
-.footer ***REMOVED***
+.footer {
   position: absolute;
   bottom: 0;
   width: 100%;

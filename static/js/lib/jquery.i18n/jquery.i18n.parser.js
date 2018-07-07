@@ -13,29 +13,29 @@
  * @licence MIT License
  */
 
-( function ( $ ) ***REMOVED***
+( function ( $ ) {
 	'use strict';
 
-	var MessageParser = function ( options ) ***REMOVED***
-		this.options = $.extend( ***REMOVED***}, $.i18n.parser.defaults, options );
+	var MessageParser = function ( options ) {
+		this.options = $.extend( {}, $.i18n.parser.defaults, options );
 		this.language = $.i18n.languages[ String.locale ] || $.i18n.languages[ 'default' ];
 		this.emitter = $.i18n.parser.emitter;
 	};
 
-	MessageParser.prototype = ***REMOVED***
+	MessageParser.prototype = {
 
 		constructor: MessageParser,
 
-		simpleParse: function ( message, parameters ) ***REMOVED***
-			return message.replace( /\$(\d+)/g, function ( str, match ) ***REMOVED***
+		simpleParse: function ( message, parameters ) {
+			return message.replace( /\$(\d+)/g, function ( str, match ) {
 				var index = parseInt( match, 10 ) - 1;
 
 				return parameters[ index ] !== undefined ? parameters[ index ] : '$' + match;
 			} );
 		},
 
-		parse: function ( message, replacements ) ***REMOVED***
-			if ( message.indexOf( '***REMOVED******REMOVED***' ) < 0 ) ***REMOVED***
+		parse: function ( message, replacements ) {
+			if ( message.indexOf( '{{' ) < 0 ) {
 				return this.simpleParse( message, replacements );
 			}
 
@@ -45,7 +45,7 @@
 			return this.emitter.emit( this.ast( message ), replacements );
 		},
 
-		ast: function ( message ) ***REMOVED***
+		ast: function ( message ) {
 			var pipe, colon, backslash, anyCharacter, dollar, digits, regularLiteral,
 				regularLiteralWithoutBar, regularLiteralWithoutSpace, escapedOrLiteralWithoutBar,
 				escapedOrRegularLiteral, templateContents, templateName, openTemplate,
@@ -53,14 +53,14 @@
 				pos = 0;
 
 			// Try parsers until one works, if none work return null
-			function choice( parserSyntax ) ***REMOVED***
-				return function () ***REMOVED***
+			function choice( parserSyntax ) {
+				return function () {
 					var i, result;
 
-					for ( i = 0; i < parserSyntax.length; i++ ) ***REMOVED***
+					for ( i = 0; i < parserSyntax.length; i++ ) {
 						result = parserSyntax[ i ]();
 
-						if ( result !== null ) ***REMOVED***
+						if ( result !== null ) {
 							return result;
 						}
 					}
@@ -72,15 +72,15 @@
 			// Try several parserSyntax-es in a row.
 			// All must succeed; otherwise, return null.
 			// This is the only eager one.
-			function sequence( parserSyntax ) ***REMOVED***
+			function sequence( parserSyntax ) {
 				var i, res,
 					originalPos = pos,
 					result = [];
 
-				for ( i = 0; i < parserSyntax.length; i++ ) ***REMOVED***
+				for ( i = 0; i < parserSyntax.length; i++ ) {
 					res = parserSyntax[ i ]();
 
-					if ( res === null ) ***REMOVED***
+					if ( res === null ) {
 						pos = originalPos;
 
 						return null;
@@ -94,18 +94,18 @@
 
 			// Run the same parser over and over until it fails.
 			// Must succeed a minimum of n times; otherwise, return null.
-			function nOrMore( n, p ) ***REMOVED***
-				return function () ***REMOVED***
+			function nOrMore( n, p ) {
+				return function () {
 					var originalPos = pos,
 						result = [],
 						parsed = p();
 
-					while ( parsed !== null ) ***REMOVED***
+					while ( parsed !== null ) {
 						result.push( parsed );
 						parsed = p();
 					}
 
-					if ( result.length < n ) ***REMOVED***
+					if ( result.length < n ) {
 						pos = originalPos;
 
 						return null;
@@ -117,13 +117,13 @@
 
 			// Helpers -- just make parserSyntax out of simpler JS builtin types
 
-			function makeStringParser( s ) ***REMOVED***
+			function makeStringParser( s ) {
 				var len = s.length;
 
-				return function () ***REMOVED***
+				return function () {
 					var result = null;
 
-					if ( message.slice( pos, pos + len ) === s ) ***REMOVED***
+					if ( message.slice( pos, pos + len ) === s ) {
 						result = s;
 						pos += len;
 					}
@@ -132,11 +132,11 @@
 				};
 			}
 
-			function makeRegexParser( regex ) ***REMOVED***
-				return function () ***REMOVED***
+			function makeRegexParser( regex ) {
+				return function () {
 					var matches = message.slice( pos ).match( regex );
 
-					if ( matches === null ) ***REMOVED***
+					if ( matches === null ) {
 						return null;
 					}
 
@@ -152,9 +152,9 @@
 			anyCharacter = makeRegexParser( /^./ );
 			dollar = makeStringParser( '$' );
 			digits = makeRegexParser( /^\d+/ );
-			regularLiteral = makeRegexParser( /^[^***REMOVED***}\[\]$\\]/ );
-			regularLiteralWithoutBar = makeRegexParser( /^[^***REMOVED***}\[\]$\\|]/ );
-			regularLiteralWithoutSpace = makeRegexParser( /^[^***REMOVED***}\[\]$\s]/ );
+			regularLiteral = makeRegexParser( /^[^{}\[\]$\\]/ );
+			regularLiteralWithoutBar = makeRegexParser( /^[^{}\[\]$\\|]/ );
+			regularLiteralWithoutSpace = makeRegexParser( /^[^{}\[\]$\s]/ );
 
 			// There is a general pattern:
 			// parse a thing;
@@ -163,8 +163,8 @@
 			// But using this as a combinator seems to cause problems
 			// when combined with nOrMore().
 			// May be some scoping issue.
-			function transform( p, fn ) ***REMOVED***
-				return function () ***REMOVED***
+			function transform( p, fn ) {
+				return function () {
 					var result = p();
 
 					return result === null ? null : fn( result );
@@ -174,19 +174,19 @@
 			// Used to define "literals" within template parameters. The pipe
 			// character is the parameter delimeter, so by default
 			// it is not a literal in the parameter
-			function literalWithoutBar() ***REMOVED***
+			function literalWithoutBar() {
 				var result = nOrMore( 1, escapedOrLiteralWithoutBar )();
 
 				return result === null ? null : result.join( '' );
 			}
 
-			function literal() ***REMOVED***
+			function literal() {
 				var result = nOrMore( 1, escapedOrRegularLiteral )();
 
 				return result === null ? null : result.join( '' );
 			}
 
-			function escapedLiteral() ***REMOVED***
+			function escapedLiteral() {
 				var result = sequence( [ backslash, anyCharacter ] );
 
 				return result === null ? null : result[ 1 ];
@@ -196,10 +196,10 @@
 			escapedOrLiteralWithoutBar = choice( [ escapedLiteral, regularLiteralWithoutBar ] );
 			escapedOrRegularLiteral = choice( [ escapedLiteral, regularLiteral ] );
 
-			function replacement() ***REMOVED***
+			function replacement() {
 				var result = sequence( [ dollar, digits ] );
 
-				if ( result === null ) ***REMOVED***
+				if ( result === null ) {
 					return null;
 				}
 
@@ -211,16 +211,16 @@
 				// not allowing : due to the need to catch "PLURAL:$1"
 				makeRegexParser( /^[ !"$&'()*,.\/0-9;=?@A-Z\^_`a-z~\x80-\xFF+\-]+/ ),
 
-				function ( result ) ***REMOVED***
+				function ( result ) {
 					return result.toString();
 				}
 			);
 
-			function templateParam() ***REMOVED***
+			function templateParam() {
 				var expr,
 					result = sequence( [ pipe, nOrMore( 0, paramExpression ) ] );
 
-				if ( result === null ) ***REMOVED***
+				if ( result === null ) {
 					return null;
 				}
 
@@ -231,35 +231,35 @@
 				return expr.length > 1 ? [ 'CONCAT' ].concat( expr ) : expr[ 0 ];
 			}
 
-			function templateWithReplacement() ***REMOVED***
+			function templateWithReplacement() {
 				var result = sequence( [ templateName, colon, replacement ] );
 
 				return result === null ? null : [ result[ 0 ], result[ 2 ] ];
 			}
 
-			function templateWithOutReplacement() ***REMOVED***
+			function templateWithOutReplacement() {
 				var result = sequence( [ templateName, colon, paramExpression ] );
 
 				return result === null ? null : [ result[ 0 ], result[ 2 ] ];
 			}
 
 			templateContents = choice( [
-				function () ***REMOVED***
+				function () {
 					var res = sequence( [
 						// templates can have placeholders for dynamic
-						// replacement eg: ***REMOVED******REMOVED***PLURAL:$1|one car|$1 cars}}
+						// replacement eg: {{PLURAL:$1|one car|$1 cars}}
 						// or no placeholders eg:
-						// ***REMOVED******REMOVED***GRAMMAR:genitive|***REMOVED******REMOVED***SITENAME}}}
+						// {{GRAMMAR:genitive|{{SITENAME}}}
 						choice( [ templateWithReplacement, templateWithOutReplacement ] ),
 						nOrMore( 0, templateParam )
 					] );
 
 					return res === null ? null : res[ 0 ].concat( res[ 1 ] );
 				},
-				function () ***REMOVED***
+				function () {
 					var res = sequence( [ templateName, nOrMore( 0, templateParam ) ] );
 
-					if ( res === null ) ***REMOVED***
+					if ( res === null ) {
 						return null;
 					}
 
@@ -267,10 +267,10 @@
 				}
 			] );
 
-			openTemplate = makeStringParser( '***REMOVED******REMOVED***' );
+			openTemplate = makeStringParser( '{{' );
 			closeTemplate = makeStringParser( '}}' );
 
-			function template() ***REMOVED***
+			function template() {
 				var result = sequence( [ openTemplate, templateContents, closeTemplate ] );
 
 				return result === null ? null : result[ 1 ];
@@ -279,10 +279,10 @@
 			expression = choice( [ template, replacement, literal ] );
 			paramExpression = choice( [ template, replacement, literalWithoutBar ] );
 
-			function start() ***REMOVED***
+			function start() {
 				var result = nOrMore( 0, expression )();
 
-				if ( result === null ) ***REMOVED***
+				if ( result === null ) {
 					return null;
 				}
 
@@ -296,7 +296,7 @@
 			 * and returned a non-null.
 			 * n.b. This is part of language infrastructure, so we do not throw an internationalizable message.
 			 */
-			if ( result === null || pos !== message.length ) ***REMOVED***
+			if ( result === null || pos !== message.length ) {
 				throw new Error( 'Parse error at position ' + pos.toString() + ' in input: ' + message );
 			}
 

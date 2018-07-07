@@ -12,20 +12,20 @@
  * @licence MIT License
  */
 
-( function ( $ ) ***REMOVED***
+( function ( $ ) {
 	'use strict';
 
-	var MessageStore = function () ***REMOVED***
-		this.messages = ***REMOVED***};
-		this.sources = ***REMOVED***};
+	var MessageStore = function () {
+		this.messages = {};
+		this.sources = {};
 	};
 
-	function jsonMessageLoader( url ) ***REMOVED***
+	function jsonMessageLoader( url ) {
 		var deferred = $.Deferred();
 
 		$.getJSON( url )
 			.done( deferred.resolve )
-			.fail( function ( jqxhr, settings, exception ) ***REMOVED***
+			.fail( function ( jqxhr, settings, exception ) {
 				$.i18n.log( 'Error in loading messages from ' + url + ' Exception: ' + exception );
 				// Ignore 404 exception, because we are handling fallabacks explicitly
 				deferred.resolve();
@@ -37,7 +37,7 @@
 	/**
 	 * See https://github.com/wikimedia/jquery.i18n/wiki/Specification#wiki-Message_File_Loading
 	 */
-	MessageStore.prototype = ***REMOVED***
+	MessageStore.prototype = {
 
 		/**
 		 * General message loading API This can take a URL string for
@@ -50,43 +50,43 @@
 		 * A data object containing message key- message translation mappings
 		 * can also be passed Eg:
 		 * <code>
-		 * load( ***REMOVED*** 'hello' : 'Hello' }, optionalLocale );
+		 * load( { 'hello' : 'Hello' }, optionalLocale );
 		 * </code> If the data argument is
 		 * null/undefined/false,
 		 * all cached messages for the i18n instance will get reset.
 		 *
-		 * @param ***REMOVED***string|Object} source
-		 * @param ***REMOVED***string} locale Language tag
-		 * @return ***REMOVED***jQuery.Promise}
+		 * @param {string|Object} source
+		 * @param {string} locale Language tag
+		 * @return {jQuery.Promise}
 		 */
-		load: function ( source, locale ) ***REMOVED***
+		load: function ( source, locale ) {
 			var key = null,
 				deferred = null,
 				deferreds = [],
 				messageStore = this;
 
-			if ( typeof source === 'string' ) ***REMOVED***
+			if ( typeof source === 'string' ) {
 				// This is a URL to the messages file.
 				$.i18n.log( 'Loading messages from: ' + source );
 				deferred = jsonMessageLoader( source )
-					.done( function ( localization ) ***REMOVED***
+					.done( function ( localization ) {
 						messageStore.set( locale, localization );
 					} );
 
 				return deferred.promise();
 			}
 
-			if ( locale ) ***REMOVED***
+			if ( locale ) {
 				// source is an key-value pair of messages for given locale
 				messageStore.set( locale, source );
 
 				return $.Deferred().resolve();
-			} else ***REMOVED***
+			} else {
 				// source is a key-value pair of locales and their source
-				for ( key in source ) ***REMOVED***
-					if ( Object.prototype.hasOwnProperty.call( source, key ) ) ***REMOVED***
+				for ( key in source ) {
+					if ( Object.prototype.hasOwnProperty.call( source, key ) ) {
 						locale = key;
-						// No ***REMOVED***locale} given, assume data is a group of languages,
+						// No {locale} given, assume data is a group of languages,
 						// call this function again for each language.
 						deferreds.push( messageStore.load( source[ key ], locale ) );
 					}
@@ -100,24 +100,24 @@
 		 * Set messages to the given locale.
 		 * If locale exists, add messages to the locale.
 		 *
-		 * @param ***REMOVED***string} locale
-		 * @param ***REMOVED***Object} messages
+		 * @param {string} locale
+		 * @param {Object} messages
 		 */
-		set: function ( locale, messages ) ***REMOVED***
-			if ( !this.messages[ locale ] ) ***REMOVED***
+		set: function ( locale, messages ) {
+			if ( !this.messages[ locale ] ) {
 				this.messages[ locale ] = messages;
-			} else ***REMOVED***
+			} else {
 				this.messages[ locale ] = $.extend( this.messages[ locale ], messages );
 			}
 		},
 
 		/**
 		 *
-		 * @param ***REMOVED***string} locale
-		 * @param ***REMOVED***string} messageKey
-		 * @return ***REMOVED***boolean}
+		 * @param {string} locale
+		 * @param {string} messageKey
+		 * @return {boolean}
 		 */
-		get: function ( locale, messageKey ) ***REMOVED***
+		get: function ( locale, messageKey ) {
 			return this.messages[ locale ] && this.messages[ locale ][ messageKey ];
 		}
 	};

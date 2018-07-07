@@ -13,7 +13,7 @@
  * @licence MIT License
  */
 
-( function ( $ ) ***REMOVED***
+( function ( $ ) {
 	'use strict';
 	var strongDirRegExp;
 
@@ -46,21 +46,21 @@
 	 * TODO: Does not handle BIDI control characters inside the text.
 	 * TODO: Does not handle unallocated characters.
 	 *
-	 * @param ***REMOVED***string} text The text from which to extract initial directionality.
-	 * @return ***REMOVED***string} Directionality (either 'ltr' or 'rtl')
+	 * @param {string} text The text from which to extract initial directionality.
+	 * @return {string} Directionality (either 'ltr' or 'rtl')
 	 */
-	function strongDirFromContent( text ) ***REMOVED***
+	function strongDirFromContent( text ) {
 		var m = text.match( strongDirRegExp );
-		if ( !m ) ***REMOVED***
+		if ( !m ) {
 			return null;
 		}
-		if ( m[ 2 ] === undefined ) ***REMOVED***
+		if ( m[ 2 ] === undefined ) {
 			return 'ltr';
 		}
 		return 'rtl';
 	}
 
-	$.extend( $.i18n.parser.emitter, ***REMOVED***
+	$.extend( $.i18n.parser.emitter, {
 		/**
 		 * Wraps argument with unicode control characters for directionality safety
 		 *
@@ -74,16 +74,16 @@
 		 * there is no embedding equivalent of U+2068 FSI (isolation with heuristic
 		 * direction inference). The latter is cleaner but still not widely supported.
 		 *
-		 * @param ***REMOVED***string[]} nodes The text nodes from which to take the first item.
-		 * @return ***REMOVED***string} Wrapped String of content as needed.
+		 * @param {string[]} nodes The text nodes from which to take the first item.
+		 * @return {string} Wrapped String of content as needed.
 		 */
-		bidi: function ( nodes ) ***REMOVED***
+		bidi: function ( nodes ) {
 			var dir = strongDirFromContent( nodes[ 0 ] );
-			if ( dir === 'ltr' ) ***REMOVED***
+			if ( dir === 'ltr' ) {
 				// Wrap in LEFT-TO-RIGHT EMBEDDING ... POP DIRECTIONAL FORMATTING
 				return '\u202A' + nodes[ 0 ] + '\u202C';
 			}
-			if ( dir === 'rtl' ) ***REMOVED***
+			if ( dir === 'rtl' ) {
 				// Wrap in RIGHT-TO-LEFT EMBEDDING ... POP DIRECTIONAL FORMATTING
 				return '\u202B' + nodes[ 0 ] + '\u202C';
 			}

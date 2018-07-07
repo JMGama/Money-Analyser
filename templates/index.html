@@ -9,21 +9,21 @@
 
   <!-- Bootstrap -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="***REMOVED******REMOVED*** url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.js') }}"></script>
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.messagestore.js') }}"></script>
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.fallbacks.js') }}"></script>
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.language.js') }}"></script>
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.parser.js') }}"></script>
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.emitter.js') }}"></script>
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.emitter.bidi.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.messagestore.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.fallbacks.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.language.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.parser.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.emitter.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jquery.i18n/jquery.i18n.emitter.bidi.js') }}"></script>
 
   <!-- Include Webcam library to capture user webcam-->
-  <script src="***REMOVED******REMOVED*** url_for('static', filename='js/lib/webcam.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/webcam.js') }}"></script>
 </head>
 
 <body>
@@ -57,15 +57,15 @@
   // Starts and takes capture of the user camera
   Webcam.attach('#container-cam');
 
-  function take_snapshot() ***REMOVED***
-    Webcam.snap(function(data_uri) ***REMOVED***
-      Webcam.upload(data_uri, "***REMOVED******REMOVED*** url_for('analyse_image') }}", function(code, text) ***REMOVED***
+  function take_snapshot() {
+    Webcam.snap(function(data_uri) {
+      Webcam.upload(data_uri, "{{ url_for('analyse_image') }}", function(code, text) {
         // Upload complete!
         // 'code' will be the HTTP response code from the server, e.g. 200
         // 'text' will be the raw response content
-  ***REMOVED***);
-***REMOVED***);
-***REMOVED***
+      });
+    });
+  }
 </script>
 
 </html>
