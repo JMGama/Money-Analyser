@@ -1,0 +1,8 @@
+.gitignore
+LICENSE
+README.md
+vcap-local.json
+
+# python virtual environment/compiled files
+venv/
+*.pyc
