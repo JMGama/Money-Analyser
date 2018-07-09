@@ -27,6 +27,11 @@
 </head>
 
 <body>
+
+  <audio autoplay>
+    <source src="{{ url_for('static', filename='audios/audio.wav') }}" type="audio/wav">
+  </audio>
+
   <div class="container">
 
     <div class="page-header">
@@ -53,10 +58,8 @@
           <img src="{{ url_for('static', filename='images/bubble-talk.png') }}" class="img-responsive" />
           <div class="caption">
             {% if message is defined%}
-            <h3>{{ message|safe }}</h3>
-            {% else %}
-            <h3>Hola amigo!<br>Yo soy watson.</h3>
-            {% endif %}
+            <h3>{{ message|safe }}</h3> {% else %}
+            <h3>Hola amigo!<br>Yo soy watson.</h3> {% endif %}
           </div>
         </div>
       </div>

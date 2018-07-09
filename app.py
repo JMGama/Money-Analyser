@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from cloudant import Cloudant
 from flask import Flask, render_template, request, jsonify, Response, redirect
-from watson_developer_cloud import VisualRecognitionV3
+from watson_developer_cloud import VisualRecognitionV3, TextToSpeechV1
 
 import atexit
 import os
@@ -14,6 +17,7 @@ db = None
 vrec_api_key = None
 vrec_url = None
 visual_recognition = None
+text_to_speech = None
 # Loading all the credentials from the IBM services
 # Take them from local file or from the environment variables
 if 'VCAP_SERVICES' in os.environ:
@@ -21,10 +25,10 @@ if 'VCAP_SERVICES' in os.environ:
     print('Found VCAP_SERVICES')
     if 'cloudantNoSQLDB' in vcap:
         creds_cloudant = vcap['cloudantNoSQLDB'][0]['credentials']
-        user = creds_cloudant['username']
-        password = creds_cloudant['password']
-        url = 'https://' + creds_cloudant['host']
-        client = Cloudant(user, password, url=url, connect=True)
+        cd_user = creds_cloudant['username']
+        cd_password = creds_cloudant['password']
+        cd_url = 'https://' + creds_cloudant['host']
+        client = Cloudant(cd_user, cd_password, url=cd_url, connect=True)
         db = client.create_database(db_name, throw_on_exists=False)
 
     if 'watson_vision_combined' in vcap:
@@ -36,15 +40,23 @@ if 'VCAP_SERVICES' in os.environ:
             url=vrec_url,
             iam_api_key=vrec_api_key)
 
+    if 'text_to_speech' in vcap:
+        creds_text_speech = vcap['text_to_speech'][0]['credentials']
+        ts_user = creds_text_speech['username']
+        ts_password = creds_text_speech['password']
+        text_to_speech = TextToSpeechV1(
+            username=ts_user,
+            password=ts_password)
+
 elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:
         vcap = json.load(f)
         print('Found local VCAP_SERVICES')
         creds_cloudant = vcap['services']['cloudantNoSQLDB'][0]['credentials']
-        user = creds_cloudant['username']
-        password = creds_cloudant['password']
-        url = 'https://' + creds_cloudant['host']
-        client = Cloudant(user, password, url=url, connect=True)
+        cd_user = creds_cloudant['username']
+        cd_password = creds_cloudant['password']
+        cd_url = 'https://' + creds_cloudant['host']
+        client = Cloudant(cd_user, cd_password, url=cd_url, connect=True)
         db = client.create_database(db_name, throw_on_exists=False)
 
         creds_watson_vision = vcap['services']['watson_vision_combined'][0]['credentials']
@@ -55,6 +67,13 @@ elif os.path.isfile('vcap-local.json'):
             url=vrec_url,
             iam_api_key=vrec_api_key)
 
+        creds_text_speech = vcap['services']['text_to_speech'][0]['credentials']
+        ts_user = creds_text_speech['username']
+        ts_password = creds_text_speech['password']
+        text_to_speech = TextToSpeechV1(
+            username=ts_user,
+            password=ts_password)
+
 # On IBM Cloud Cloud Foundry, get the port number from the environment variable PORT
 # When running this app on the local machine, default the port to 8000
 port = int(os.getenv('PORT', 8000))
@@ -63,6 +82,9 @@ port = int(os.getenv('PORT', 8000))
 @app.route('/')
 def root():
     """Video streaming home page."""
+    with open('./static/audios/audio.wav', 'wb') as audio_file:
+        audio_file.write(text_to_speech.synthesize(
+            "Hola amigo! Yo soy Watson", 'audio/wav', 'es-LA_SofiaVoice').content)
     return render_template('index.html')
 
 
@@ -107,20 +129,30 @@ def analyse_image():
 def send_message(money):
 
     if money == '20':
-        message = "Jmm! $20<br>pesos, estaria<br>bien comprar<br>un gansito"
+        message_html = "Jmm! $20<br>pesos, estaria<br>bien comprar<br>un gansito"
+        message = "Perfecto! $20, estaria bien comprar un gansito"
     elif money == '50':
-        message = "Veo que tienes!<br>$50 pesos,<br>en que lo<br>planeas usar?"
+        message_html = "Veo que tienes!<br>$50 pesos,<br>en que lo<br>planeas usar?"
+        message = "Veo que tienes! $50, ¿en que lo planeas usar?"
     elif money == '100':
-        message = "Wow!<br>$100 pesos,<br>no me quieres<br>invitar un cafe?"
+        message_html = "Wow!<br>$100 pesos,<br>no me quieres<br>invitar un café?"
+        message = "Wow! $100, ¿no me quieres invitar un cafe?"
     elif money == "200":
-        message = "Wow! $200<br>pesos, conozco<br>buenas promos<br>en el oxxo."
+        message_html = "Wow! $200<br>pesos, conozco<br>buenas promos<br>en el oxxo."
+        message = "Wow! $200, conozco buenas promos en el oxxo."
     elif money == "500":
-        message = "Bien! $500<br>pesos, deberias<br>invertirlo<br>en algo util."
+        message_html = "Bien! $500<br>pesos, deberias<br>invertirlo<br>en algo util."
+        message = "Bien! $500, deberias invertirlo en algo util."
     elif money == "1000":
-        message = "Increible! $1000<br>pesos, no<br>todos los dias<br>veo algo asi?"
+        message_html = "Increible! $1000<br>pesos, no<br>todos los dias<br>veo algo asi?"
+        message = "Increible! $1000, ¿no todos los dias veo algo asi?"
+
+    with open('./static/audios/audio.wav', 'wb') as audio_file:
+        audio_file.write(text_to_speech.synthesize(
+            message, 'audio/wav', 'es-LA_SofiaVoice').content)
 
     content = {
-        'message': message
+        'message': message_html,
     }
     return render_template('index.html', **content)
 
