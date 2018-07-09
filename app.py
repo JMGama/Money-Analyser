@@ -13,7 +13,7 @@ client = None
 db = None
 vrec_api_key = None
 vrec_url = None
-
+visual_recognition = None
 # Loading all the credentials from the IBM services
 # Take them from local file or from the environment variables
 if 'VCAP_SERVICES' in os.environ:
@@ -52,8 +52,8 @@ elif os.path.isfile('vcap-local.json'):
         vrec_url = creds_watson_vision['url']
         visual_recognition = VisualRecognitionV3(
             version='2018-03-19',
-            url='https://gateway.watsonplatform.net/visual-recognition/api',
-            api_key=vrec_api_key)
+            url=vrec_url,
+            iam_api_key=vrec_api_key)
 
 # On IBM Cloud Cloud Foundry, get the port number from the environment variable PORT
 # When running this app on the local machine, default the port to 8000
@@ -66,9 +66,9 @@ def root():
     return render_template('index.html')
 
 
-@app.route('/analyse_image', methods=['GET', 'POST'])
+@app.route('/analyse_image', methods=['POST'])
 def analyse_image():
-    """Capture de image to then send it to analyze"""
+    """Capture de image to then send it to analyse"""
     image = request.files['webcam']
     image.save(os.path.join('images/', 'image.jpg'))
 
@@ -76,11 +76,53 @@ def analyse_image():
         classes = visual_recognition.classify(
             image_file,
             threshold='0.6',
-            classifier_ids='Bills_968841998'
+            classifier_ids='billetes_1956479900'
         )
-        print(json.dumps(classes, indent=2))
+    # classes = {'images': [{'image': './images/image.jpg', 'classifiers': [{'classes': [{'score': 0.646, 'class': 'quinientos'}],
+    #                                                                        'classifier_id': 'billetes_1956479900', 'name': 'billetes'}]}], 'custom_classes': 6, u'images_processed': 1}
 
-    return render_template('index.html')
+    image_classes = classes['images'][0]['classifiers'][0]['classes'][0]
+    result_class = image_classes['class']
+    print(image_classes)
+
+    if result_class == 'veinte':
+        result = '20'
+    elif result_class == 'cincuenta':
+        result = '50'
+    elif result_class == 'cien':
+        result = '100'
+    elif result_class == "doscientos":
+        result = '200'
+    elif result_class == "quinientos":
+        result = '500'
+    elif result_class == "mil":
+        result = '1000'
+
+    money = '/send_message/' + result
+
+    return money
+
+
+@app.route('/send_message/<money>')
+def send_message(money):
+
+    if money == '20':
+        message = "Jmm! $20<br>pesos, estaria<br>bien comprar<br>un gansito"
+    elif money == '50':
+        message = "Veo que tienes!<br>$50 pesos,<br>en que lo<br>planeas usar?"
+    elif money == '100':
+        message = "Wow!<br>$100 pesos,<br>no me quieres<br>invitar un cafe?"
+    elif money == "200":
+        message = "Wow! $200<br>pesos, conozco<br>buenas promos<br>en el oxxo."
+    elif money == "500":
+        message = "Bien! $500<br>pesos, deberias<br>invertirlo<br>en algo util."
+    elif money == "1000":
+        message = "Increible! $1000<br>pesos, no<br>todos los dias<br>veo algo asi?"
+
+    content = {
+        'message': message
+    }
+    return render_template('index.html', **content)
 
 
 @atexit.register

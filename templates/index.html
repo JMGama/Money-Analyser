@@ -27,19 +27,55 @@
 </head>
 
 <body>
-  <div class="container text-center" id="container">
-    <h1>Money Analy$er</h1>
-    <div class="row">
-      <div id="container-cam">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="row">
+        <div class="col-md-1 ">
+          <img src="{{ url_for('static', filename='images/money.png') }}" />
+        </div>
+        <div class="col-md-10 text-center">
+          <h1 class="ont-weight-bold text-info"><b>Money analy$er <b><small>- By Jose Gama</small></h1>
+        </div>
+        <div class="col-md-1 ">
+          <img src="{{ url_for('static', filename='images/money.png') }}" />
+        </div>
       </div>
     </div>
-    <div class="row">
-      <br>
-      <a class="btn btn-primary" href="javascript:void(take_snapshot())">Capturar</a>
+
+    <div class="row justify-content-md-center text-center">
+      <div class="col-md-6">
+        <div id="container-cam">
+        </div>
+      </div>
+      <div class="col-md-6 rigth">
+        <div class="thumbnail text-center">
+          <img src="{{ url_for('static', filename='images/bubble-talk.png') }}" class="img-responsive" />
+          <div class="caption">
+            {% if message is defined%}
+            <h3>{{ message|safe }}</h3>
+            {% else %}
+            <h3>Hola amigo!<br>Yo soy watson.</h3>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="row text-center">
+      <br>
+      <a class="btn btn-primary" href="javascript:void(take_snapshot())">Analizar</a>
+    </div>
+
     <div id="my_result">
     </div>
+
+    <div class="row">
+
+    </div>
+
   </div>
+
   <footer class="footer">
     <div class="container">
       <span>
@@ -60,9 +96,7 @@
   function take_snapshot() {
     Webcam.snap(function(data_uri) {
       Webcam.upload(data_uri, "{{ url_for('analyse_image') }}", function(code, text) {
-        // Upload complete!
-        // 'code' will be the HTTP response code from the server, e.g. 200
-        // 'text' will be the raw response content
+        window.location.href = text;
       });
     });
   }
