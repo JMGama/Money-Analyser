@@ -1,8 +1,10 @@
-# Money-Analyser :moneybag:
+# Money Analy$er :moneybag:
 
 Categorize Mexican bills with visual recognition.
 
 This is just a small **sample** of what would be a larger project in order to help people with **visual disabilities** so that with a mobile device or with specialized hardware they are able to **identify the money** they have and be told by sound, this to facilitate the handling of money.
+
+_Remember it's only a prototype (need more time to make it better, feel free to contribute.)_
 
 ## How to use it :computer:
 
@@ -10,6 +12,8 @@ To use this project, you will go to the [link to the app](https://moneyanalyser-
 
 Then you put a bill in front of the camera an push the **analizar** button.
 It will display the answer in the chat balloon of the robot, and also will sound so make sure you **turn on** your volume :sound:.
+
+_Remember it's only a prototype (need more time to make it better, feel free to contribute.)_
 
 ## Categories of money recognition :dollar:
 
@@ -20,11 +24,15 @@ It will display the answer in the chat balloon of the robot, and also will sound
 -   Bill of **$50** mxn
 -   Bill of **$20** mxn
 
+_Remember it's only a prototype (need more time to make it better, feel free to contribute.)_
+
 ## IBM Resources used :inbox_tray:
 
 -   Cloud Foundry for Python
 -   Watson Visual Recognition
 -   Watson Text To Speech
+
+_Remember it's only a prototype (need more time to make it better, feel free to contribute.)_
 
 ## Powered by :fuelpump:
 
@@ -35,3 +43,5 @@ It will display the answer in the chat balloon of the robot, and also will sound
 
 Icons made by <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a> & <a href="https://www.flaticon.com/authors/dimitry-miroliubov" title="Dimitry Miroliubov">Dimitry Miroliubov </a>from <a href="https://www.flaticon.com/"
   title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+
+  _Remember it's only a prototype (need more time to make it better, feel free to contribute.)_
