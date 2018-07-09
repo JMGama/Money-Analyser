@@ -52,12 +52,12 @@ elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:
         vcap = json.load(f)
         print('Found local VCAP_SERVICES')
-        creds_cloudant = vcap['services']['cloudantNoSQLDB'][0]['credentials']
-        cd_user = creds_cloudant['username']
-        cd_password = creds_cloudant['password']
-        cd_url = 'https://' + creds_cloudant['host']
-        client = Cloudant(cd_user, cd_password, url=cd_url, connect=True)
-        db = client.create_database(db_name, throw_on_exists=False)
+        # creds_cloudant = vcap['services']['cloudantNoSQLDB'][0]['credentials']
+        # cd_user = creds_cloudant['username']
+        # cd_password = creds_cloudant['password']
+        # cd_url = 'https://' + creds_cloudant['host']
+        # client = Cloudant(cd_user, cd_password, url=cd_url, connect=True)
+        # db = client.create_database(db_name, throw_on_exists=False)
 
         creds_watson_vision = vcap['services']['watson_vision_combined'][0]['credentials']
         vrec_api_key = creds_watson_vision['apikey']
@@ -127,24 +127,24 @@ def send_message(money):
 
     if money == '20':
         message_html = "Perfecto! $20<br>pesos, estaria<br>bien comprar<br>un gansito"
-        message = "Perfecto! $20, estaria bien comprar un gansito"
+        message = "¡Perfecto, $20! estaría bien comprar un gansito"
     elif money == '50':
-        message_html = "Veo que tienes!<br>$50 pesos,<br>en que lo<br>planeas usar?"
-        message = "Veo que tienes! $50, ¿en que lo planeas usar?"
+        message_html = "Veo que tienes<br>$50 pesos,<br>en que lo<br>planeas usar?"
+        message = "¡Veo que tienes $50! ¿en que lo planeas usar?"
     elif money == '100':
         message_html = "Wow!<br>$100 pesos,<br>no me quieres<br>invitar un cafe?"
-        message = "Wow! $100, ¿no me quieres invitar un café?"
+        message = "¡Woaw, $100! ¿no me quieres invitar un café?"
     elif money == "200":
         message_html = "Wow! $200<br>pesos, conozco<br>buenas promos<br>en el oxxo."
-        message = "Wow! $200, conozco buenas promos en el oxo."
+        message = "¡Woaw, $200! conozco buenas promos en el oxo."
     elif money == "500":
         message_html = "Bien! $500<br>pesos, deberias<br>invertirlo<br>en algo util."
-        message = "Bien! $500, deberias invertirlo en algo util."
+        message = "¡Bien, $500! deberías invertirlo en algo útil."
     elif money == "1000":
-        message_html = "Increible! $1000<br>pesos, no<br>todos los dias<br>veo algo asi?"
-        message = "Increible! $1000, ¿no todos los dias veo algo asi?"
+        message_html = "Increible! $1000<br>pesos, no<br>todos los dias<br>veo algo asi!"
+        message = "¡Increíble, $1000! ¡no todos los días veo algo así!"
 
-    # with open('./static/audios/audio.wav', 'wb') as audio_file:
+    # with open('./static/audios/audio1000.wav', 'wb') as audio_file:
     #     audio_file.write(text_to_speech.synthesize(
     #         message, 'audio/wav', 'es-LA_SofiaVoice').content)
 
