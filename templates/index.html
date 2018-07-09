@@ -27,11 +27,6 @@
 </head>
 
 <body>
-
-  <audio autoplay>
-    <source src="{{ url_for('static', filename='audios/audio.wav') }}" type="audio/wav">
-  </audio>
-
   <div class="container">
 
     <div class="page-header">
@@ -95,6 +90,8 @@
 <script type="text/javascript">
   // Starts and takes capture of the user camera
   Webcam.attach('#container-cam');
+  var audio = new Audio('{{ audio }}');
+  audio.play();
 
   function take_snapshot() {
     Webcam.snap(function(data_uri) {

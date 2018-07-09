@@ -82,9 +82,6 @@ port = int(os.getenv('PORT', 8000))
 @app.route('/')
 def root():
     """Video streaming home page."""
-    with open('./static/audios/audio.wav', 'wb') as audio_file:
-        audio_file.write(text_to_speech.synthesize(
-            "Hola amigo! Yo soy Watson", 'audio/wav', 'es-LA_SofiaVoice').content)
     return render_template('index.html')
 
 
@@ -129,17 +126,17 @@ def analyse_image():
 def send_message(money):
 
     if money == '20':
-        message_html = "Jmm! $20<br>pesos, estaria<br>bien comprar<br>un gansito"
+        message_html = "Perfecto! $20<br>pesos, estaria<br>bien comprar<br>un gansito"
         message = "Perfecto! $20, estaria bien comprar un gansito"
     elif money == '50':
         message_html = "Veo que tienes!<br>$50 pesos,<br>en que lo<br>planeas usar?"
         message = "Veo que tienes! $50, ¿en que lo planeas usar?"
     elif money == '100':
-        message_html = "Wow!<br>$100 pesos,<br>no me quieres<br>invitar un café?"
-        message = "Wow! $100, ¿no me quieres invitar un cafe?"
+        message_html = "Wow!<br>$100 pesos,<br>no me quieres<br>invitar un cafe?"
+        message = "Wow! $100, ¿no me quieres invitar un café?"
     elif money == "200":
         message_html = "Wow! $200<br>pesos, conozco<br>buenas promos<br>en el oxxo."
-        message = "Wow! $200, conozco buenas promos en el oxxo."
+        message = "Wow! $200, conozco buenas promos en el oxo."
     elif money == "500":
         message_html = "Bien! $500<br>pesos, deberias<br>invertirlo<br>en algo util."
         message = "Bien! $500, deberias invertirlo en algo util."
@@ -147,12 +144,13 @@ def send_message(money):
         message_html = "Increible! $1000<br>pesos, no<br>todos los dias<br>veo algo asi?"
         message = "Increible! $1000, ¿no todos los dias veo algo asi?"
 
-    with open('./static/audios/audio.wav', 'wb') as audio_file:
-        audio_file.write(text_to_speech.synthesize(
-            message, 'audio/wav', 'es-LA_SofiaVoice').content)
+    # with open('./static/audios/audio.wav', 'wb') as audio_file:
+    #     audio_file.write(text_to_speech.synthesize(
+    #         message, 'audio/wav', 'es-LA_SofiaVoice').content)
 
     content = {
         'message': message_html,
+        'audio': '/audios/audio'+money+'.wav/'
     }
     return render_template('index.html', **content)
 
